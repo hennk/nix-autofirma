@@ -15,10 +15,12 @@ in {
         This can be used to install a custom autofirma package.
       '';
     };
+
+    scReaderSupport = lib.mkEnableOption "Install packages needed for Smartcard Reader support.";
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ cfg.package ];
+    environment.systemPackages = [ cfg.package ] ++ lib.lists.optionals cfg.scReaderSupport [ pkgs.ccid pkgs.pcsclite pkgs.opensc pkgs.scmccid ];
     security.pki.certificateFiles = [
       "${cfg.package}/share/AutoFirma/AutoFirma_ROOT.pem"
     ];
