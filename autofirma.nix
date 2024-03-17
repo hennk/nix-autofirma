@@ -28,7 +28,9 @@ stdenv.mkDerivation rec {
   '';
 
   buildPhase = ''
+    # Creates local Root CA, creates a local server certificate for the AutoFirma app, and deletes the Root CA key, so no further certificates can be generated
     ${temurin-jre-bin-17}/bin/java -jar usr/lib/AutoFirma/AutoFirmaConfigurador.jar
+    # Create a PEM-encoded copy of the Root CA certificate, for easier integration with linux stores
     ${openssl}/bin/openssl x509 -in usr/lib/AutoFirma/AutoFirma_ROOT.cer -out usr/lib/AutoFirma/AutoFirma_ROOT.pem
   '';
 
@@ -45,7 +47,6 @@ stdenv.mkDerivation rec {
     EOF
     chmod +x $out/bin/AutoFirma
 
-    # install -Dm644 usr/lib/AutoFirma/AutoFirma_ROOT.cer $out/share/ca-certificates/trust-source/anchors/AutoFirma_ROOT.cer
     install -Dm644 usr/lib/AutoFirma/AutoFirma_ROOT.cer $out/share/AutoFirma/AutoFirma_ROOT.cer
     install -Dm644 usr/lib/AutoFirma/AutoFirma_ROOT.pem $out/share/AutoFirma/AutoFirma_ROOT.pem
     install -Dm644 usr/lib/AutoFirma/autofirma.pfx $out/share/AutoFirma/autofirma.pfx
