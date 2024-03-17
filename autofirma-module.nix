@@ -24,6 +24,11 @@ in {
     security.pki.certificateFiles = [
       "${cfg.package}/share/AutoFirma/AutoFirma_ROOT.pem"
     ];
+
+    services = lib.mkIf cfg.scReaderSupport {
+      pcscd = { enable = true; };
+    };
+
   };
 
 }
